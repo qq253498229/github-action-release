@@ -1,0 +1,22 @@
+name: test
+
+on:
+  push:
+    branches:
+      - test
+
+env:
+  IS_CI: true
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    name: test1
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+      - name: 测试
+        uses: qq253498229/github-action-release@test
