@@ -9,10 +9,15 @@ branding:
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: Your input description here
+  draft:
+    description: '发布的Release是不是draft，默认为false'
+    required: false
+  files:
+    description: '需要部署的文件'
     required: true
-    default: '1000'
+
+env:
+  GITHUB_TOKEN: 'As provided by Github Actions'
 
 # Define your outputs here.
 outputs:

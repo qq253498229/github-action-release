@@ -1,5 +1,9 @@
-import * as core from '@actions/core'
-import { wait } from './wait.js'
+import { getInput, info, setFailed } from '@actions/core'
+import { basename, resolve } from 'node:path'
+import { Octokit } from '@octokit/core'
+import { env } from 'process'
+
+type Env = { [key: string]: string | undefined }
 
 /**
  * The main function for the action.
@@ -8,20 +12,45 @@ import { wait } from './wait.js'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const files: string = getInput('files')
+    info(`files:${files}`)
+    const env1: Env = env
+    const envJson = JSON.stringify(env1, null, 2)
+    info(`envJson:${envJson}`)
+    const auth = ``
+    const owner = `qq253498229`
+    const repo = `docs-me`
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const octokit = new Octokit({ auth })
+    const releases = await octokit.request(
+      'GET /repos/{owner}/{repo}/releases',
+      {
+        owner,
+        repo,
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      }
+    )
+    const status = releases.status
+    info(`status:${status}`)
+    const data = releases.data
+    const json = JSON.stringify(data, null, 2)
+    info(`json:${json}`)
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const root = resolve('.')
+    info(`root:${root}`)
+    const name = basename(root)
+    info(`basename:${name}`)
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    // const scanResult = await scanAsync(root)
+    // const result = JSON.stringify(scanResult)
+    // info(`result:${result}`)
+
+    // const result = parse('.')
+    // info(`result:${result}`)
   } catch (error) {
     // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) setFailed(error.message)
   }
 }
