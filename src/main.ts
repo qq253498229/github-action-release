@@ -1,9 +1,9 @@
 import { getInput, info, setFailed } from '@actions/core'
 import { basename, resolve } from 'node:path'
 import { Octokit } from '@octokit/core'
-import { env } from 'process'
+// import { env } from 'process'
 
-type Env = { [key: string]: string | undefined }
+// type Env = { [key: string]: string | undefined }
 
 /**
  * The main function for the action.
@@ -14,14 +14,14 @@ export async function run(): Promise<void> {
   try {
     const files: string = getInput('files')
     info(`files:${files}`)
-    const env1: Env = env
-    const envJson = JSON.stringify(env1, null, 2)
-    info(`envJson:${envJson}`)
-    const auth = ``
+    // const env1: Env = env
+    // const envJson = JSON.stringify(env1, null, 2)
+    // info(`envJson:${envJson}`)
+    // const auth = ``
     const owner = `qq253498229`
     const repo = `docs-me`
 
-    const octokit = new Octokit({ auth })
+    const octokit = new Octokit()
     const releases = await octokit.request(
       'GET /repos/{owner}/{repo}/releases',
       {

@@ -28,7 +28,6 @@ import require$$0$9 from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
 import { resolve, basename as basename$1 } from 'node:path';
-import { env } from 'process';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -28433,6 +28432,8 @@ class Octokit {
   auth;
 }
 
+// import { env } from 'process'
+// type Env = { [key: string]: string | undefined }
 /**
  * The main function for the action.
  *
@@ -28442,13 +28443,13 @@ async function run() {
     try {
         const files = coreExports.getInput('files');
         coreExports.info(`files:${files}`);
-        const env1 = env;
-        const envJson = JSON.stringify(env1, null, 2);
-        coreExports.info(`envJson:${envJson}`);
-        const auth = ``;
+        // const env1: Env = env
+        // const envJson = JSON.stringify(env1, null, 2)
+        // info(`envJson:${envJson}`)
+        // const auth = ``
         const owner = `qq253498229`;
         const repo = `docs-me`;
-        const octokit = new Octokit({ auth });
+        const octokit = new Octokit();
         const releases = await octokit.request('GET /repos/{owner}/{repo}/releases', {
             owner,
             repo,
