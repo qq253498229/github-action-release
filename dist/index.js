@@ -66513,6 +66513,7 @@ async function run() {
             const byteLength = data.byteLength;
             coreExports.info(`byteLength:${byteLength}`);
             const name = basename$1(filePath);
+            coreExports.info(`name:${name}`);
             const uploadResult = await octokit.request('POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}', {
                 owner,
                 repo,

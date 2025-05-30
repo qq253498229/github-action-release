@@ -88,6 +88,7 @@ export async function run(): Promise<void> {
       const byteLength = data.byteLength
       info(`byteLength:${byteLength}`)
       const name = basename(filePath)
+      info(`name:${name}`)
       const uploadResult = await octokit.request(
         'POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}',
         {
