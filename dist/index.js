@@ -27,7 +27,9 @@ import require$$6 from 'string_decoder';
 import require$$0$9 from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
-import { resolve, basename as basename$1 } from 'node:path';
+import { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { env } from 'process';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -28432,8 +28434,6 @@ class Octokit {
   auth;
 }
 
-// import { env } from 'process'
-// type Env = { [key: string]: string | undefined }
 /**
  * The main function for the action.
  *
@@ -28441,31 +28441,59 @@ class Octokit {
  */
 async function run() {
     try {
+        // 获取传入的参数
         const files = coreExports.getInput('files');
         coreExports.info(`files:${files}`);
-        // const env1: Env = env
-        // const envJson = JSON.stringify(env1, null, 2)
-        // info(`envJson:${envJson}`)
-        // const auth = ``
-        const owner = `qq253498229`;
-        const repo = `docs-me`;
-        const octokit = new Octokit();
-        const releases = await octokit.request('GET /repos/{owner}/{repo}/releases', {
+        const fileList = files.split('\n').map((line) => line);
+        coreExports.info(`fileList:${fileList}`);
+        const draft = coreExports.getInput('draft') === 'true';
+        coreExports.info(`draft:${draft}`);
+        const env$1 = env;
+        coreExports.info(`env:${env$1}`);
+        const auth = env$1['GITHUB_TOKEN'] || '';
+        const repository = env$1['GITHUB_REPOSITORY'] || '';
+        const owners = repository.split('/');
+        const owner = owners[0];
+        coreExports.info(`owner: ${owner}`);
+        const repo = owners[1];
+        coreExports.info(`repo: ${repo}`);
+        const root = resolve('.');
+        coreExports.info(`root:${root}`);
+        // 新建发布
+        const octokit = new Octokit({ auth });
+        const createReleaseResult = await octokit.request('POST /repos/{owner}/{repo}/releases', {
             owner,
             repo,
+            tag_name: 'latest',
+            draft,
             headers: {
                 'X-GitHub-Api-Version': '2022-11-28'
             }
         });
-        const status = releases.status;
-        coreExports.info(`status:${status}`);
-        const data = releases.data;
-        const json = JSON.stringify(data, null, 2);
-        coreExports.info(`json:${json}`);
-        const root = resolve('.');
-        coreExports.info(`root:${root}`);
-        const name = basename$1(root);
-        coreExports.info(`basename:${name}`);
+        coreExports.info(`createReleaseResult.status: ${createReleaseResult.status}`);
+        coreExports.info(`createReleaseResult.data1: ${createReleaseResult.data}`);
+        const json1 = JSON.stringify(createReleaseResult.data, null, 2);
+        coreExports.info(`createReleaseResult.data2: ${json1}`);
+        const release = createReleaseResult.data;
+        // 上传文件
+        for (const file of fileList) {
+            const filePath = `${root}/${file}`;
+            coreExports.info(`filePath:${filePath}`);
+            const data = readFileSync(filePath);
+            const uploadResult = await octokit.request('POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}', {
+                owner,
+                repo,
+                release_id: release.id,
+                data,
+                headers: {
+                    'X-GitHub-Api-Version': '2022-11-28'
+                }
+            });
+            coreExports.info(`uploadResult.status: ${uploadResult.status}`);
+            coreExports.info(`uploadResult.data1: ${uploadResult.data}`);
+            const json2 = JSON.stringify(uploadResult.data, null, 2);
+            coreExports.info(`uploadResult.data2: ${json2}`);
+        }
         // const scanResult = await scanAsync(root)
         // const result = JSON.stringify(scanResult)
         // info(`result:${result}`)

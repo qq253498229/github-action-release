@@ -1,9 +1,10 @@
 import { getInput, info, setFailed } from '@actions/core'
-import { basename, resolve } from 'node:path'
+import { resolve } from 'node:path'
+import { readFileSync } from 'node:fs'
 import { Octokit } from '@octokit/core'
-// import { env } from 'process'
+import { env as processEnv } from 'process'
 
-// type Env = { [key: string]: string | undefined }
+type Env = { [key: string]: string | undefined }
 
 /**
  * The main function for the action.
@@ -12,37 +13,65 @@ import { Octokit } from '@octokit/core'
  */
 export async function run(): Promise<void> {
   try {
+    // 获取传入的参数
     const files: string = getInput('files')
     info(`files:${files}`)
-    // const env1: Env = env
-    // const envJson = JSON.stringify(env1, null, 2)
-    // info(`envJson:${envJson}`)
-    // const auth = ``
-    const owner = `qq253498229`
-    const repo = `docs-me`
-
-    const octokit = new Octokit()
-    const releases = await octokit.request(
-      'GET /repos/{owner}/{repo}/releases',
+    const fileList = files.split('\n').map((line: string) => line)
+    info(`fileList:${fileList}`)
+    const draft: boolean = getInput('draft') === 'true'
+    info(`draft:${draft}`)
+    const env: Env = processEnv
+    info(`env:${env}`)
+    const auth = env['GITHUB_TOKEN'] || ''
+    const repository = env['GITHUB_REPOSITORY'] || ''
+    const owners = repository.split('/')
+    const owner = owners[0]
+    info(`owner: ${owner}`)
+    const repo = owners[1]
+    info(`repo: ${repo}`)
+    const root = resolve('.')
+    info(`root:${root}`)
+    // 新建发布
+    const octokit = new Octokit({ auth })
+    const createReleaseResult = await octokit.request(
+      'POST /repos/{owner}/{repo}/releases',
       {
         owner,
         repo,
+        tag_name: 'latest',
+        draft,
         headers: {
           'X-GitHub-Api-Version': '2022-11-28'
         }
       }
     )
-    const status = releases.status
-    info(`status:${status}`)
-    const data = releases.data
-    const json = JSON.stringify(data, null, 2)
-    info(`json:${json}`)
-
-    const root = resolve('.')
-    info(`root:${root}`)
-    const name = basename(root)
-    info(`basename:${name}`)
-
+    info(`createReleaseResult.status: ${createReleaseResult.status}`)
+    info(`createReleaseResult.data1: ${createReleaseResult.data}`)
+    const json1 = JSON.stringify(createReleaseResult.data, null, 2)
+    info(`createReleaseResult.data2: ${json1}`)
+    const release = createReleaseResult.data
+    // 上传文件
+    for (const file of fileList) {
+      const filePath = `${root}/${file}`
+      info(`filePath:${filePath}`)
+      const data = readFileSync(filePath)
+      const uploadResult = await octokit.request(
+        'POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}',
+        {
+          owner,
+          repo,
+          release_id: release.id,
+          data,
+          headers: {
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        }
+      )
+      info(`uploadResult.status: ${uploadResult.status}`)
+      info(`uploadResult.data1: ${uploadResult.data}`)
+      const json2 = JSON.stringify(uploadResult.data, null, 2)
+      info(`uploadResult.data2: ${json2}`)
+    }
     // const scanResult = await scanAsync(root)
     // const result = JSON.stringify(scanResult)
     // info(`result:${result}`)
