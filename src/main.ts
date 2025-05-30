@@ -98,6 +98,7 @@ export async function run(): Promise<void> {
           data,
           name,
           label: name,
+          baseUrl: 'https://uploads.github.com',
           headers: {
             'X-GitHub-Api-Version': '2022-11-28'
           }
