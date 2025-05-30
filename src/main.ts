@@ -1,8 +1,9 @@
 import { getInput, info, setFailed } from '@actions/core'
-import { resolve } from 'node:path'
-import { readFileSync, statSync } from 'node:fs'
+import { basename, resolve } from 'node:path'
+import { createWriteStream, readFileSync, statSync } from 'node:fs'
 import { Octokit } from '@octokit/core'
 import { env as processEnv } from 'process'
+import archiver from 'archiver'
 
 type Env = { [key: string]: string | undefined }
 
@@ -53,11 +54,22 @@ export async function run(): Promise<void> {
     info(`release_id: ${release.id}`)
     // 上传文件
     for (const file of fileList) {
-      const filePath = resolve(file)
+      let filePath = resolve(file)
       info(`filePath: ${filePath}`)
       const fileStat = statSync(filePath)
       const json2 = JSON.stringify(fileStat, null, 2)
       info(`fileStat: ${json2}`)
+      if (fileStat.isDirectory()) {
+        // 如果是文件夹那么先打成压缩包
+        const folderName = basename(filePath)
+        filePath = `${folderName}.zip`
+        info(`filePath zip: ${filePath}`)
+        const output = createWriteStream(filePath)
+        const archive = archiver('zip', { zlib: { level: 9 } })
+        archive.directory(filePath, false)
+        archive.pipe(output)
+        await archive.finalize()
+      }
       const data = readFileSync(filePath)
       const uploadResult = await octokit.request(
         'POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}',

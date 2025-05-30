@@ -38,7 +38,8 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "@octokit/core": "^7.0.2"
+    "@octokit/core": "^7.0.2",
+    "archiver": "^7.0.1"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.9",
@@ -47,6 +48,7 @@
     "@rollup/plugin-commonjs": "^28.0.1",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.1",
+    "@types/archiver": "^6.0.3",
     "@types/jest": "^29.5.14",
     "@types/node": "^20.17.46",
     "@typescript-eslint/eslint-plugin": "^8.32.0",
