@@ -1,6 +1,6 @@
 import { getInput, info, setFailed } from '@actions/core'
 import { resolve } from 'node:path'
-import { readFileSync } from 'node:fs'
+import { readFileSync, statfsSync } from 'node:fs'
 import { Octokit } from '@octokit/core'
 import { env as processEnv } from 'process'
 
@@ -55,6 +55,9 @@ export async function run(): Promise<void> {
     for (const file of fileList) {
       const filePath = resolve(file)
       info(`filePath: ${filePath}`)
+      const fileStat = statfsSync(filePath)
+      const json2 = JSON.stringify(fileStat, null, 2)
+      info(`fileStat: ${json2}`)
       const data = readFileSync(filePath)
       const uploadResult = await octokit.request(
         'POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}',
@@ -69,8 +72,8 @@ export async function run(): Promise<void> {
         }
       )
       info(`uploadResult.status: ${uploadResult.status}`)
-      const json2 = JSON.stringify(uploadResult.data, null, 2)
-      info(`uploadResult.data: ${json2}`)
+      const json3 = JSON.stringify(uploadResult.data, null, 2)
+      info(`uploadResult.data: ${json3}`)
     }
     // const scanResult = await scanAsync(root)
     // const result = JSON.stringify(scanResult)
