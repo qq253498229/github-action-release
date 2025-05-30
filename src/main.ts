@@ -1,6 +1,6 @@
 import { getInput, info, setFailed } from '@actions/core'
 import { resolve } from 'node:path'
-import { readFileSync, statfsSync } from 'node:fs'
+import { readFileSync, statSync } from 'node:fs'
 import { Octokit } from '@octokit/core'
 import { env as processEnv } from 'process'
 
@@ -55,7 +55,7 @@ export async function run(): Promise<void> {
     for (const file of fileList) {
       const filePath = resolve(file)
       info(`filePath: ${filePath}`)
-      const fileStat = statfsSync(filePath)
+      const fileStat = statSync(filePath)
       const json2 = JSON.stringify(fileStat, null, 2)
       info(`fileStat: ${json2}`)
       const data = readFileSync(filePath)

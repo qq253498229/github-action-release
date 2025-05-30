@@ -28,7 +28,7 @@ import require$$0$9 from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
 import { resolve } from 'node:path';
-import { statfsSync, readFileSync } from 'node:fs';
+import { statSync, readFileSync } from 'node:fs';
 import { env } from 'process';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -28480,7 +28480,7 @@ async function run() {
         for (const file of fileList) {
             const filePath = resolve(file);
             coreExports.info(`filePath: ${filePath}`);
-            const fileStat = statfsSync(filePath);
+            const fileStat = statSync(filePath);
             const json2 = JSON.stringify(fileStat, null, 2);
             coreExports.info(`fileStat: ${json2}`);
             const data = readFileSync(filePath);
