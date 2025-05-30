@@ -66479,7 +66479,7 @@ async function run() {
         coreExports.info(`release_id: ${release.id}`);
         // 上传文件
         for (const file of fileList) {
-            let filePath = resolve(file);
+            const filePath = resolve(file);
             coreExports.info(`filePath: ${filePath}`);
             const fileStat = statSync(filePath);
             const json2 = JSON.stringify(fileStat, null, 2);
@@ -66488,9 +66488,9 @@ async function run() {
                 // 如果是文件夹那么先打成压缩包
                 const subFolderName = basename$1(filePath);
                 coreExports.info(`subFolderName:${subFolderName}`);
-                filePath = `${filePath}.zip`;
+                const zipPath = `${filePath}.zip`;
                 coreExports.info(`filePath zip: ${filePath}`);
-                const output = createWriteStream(filePath);
+                const output = createWriteStream(zipPath);
                 coreExports.info('createWriteStream done');
                 const archive = archiver('zip', { zlib: { level: 9 } });
                 coreExports.info('archiver done');
