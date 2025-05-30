@@ -77,6 +77,7 @@ export async function run(): Promise<void> {
         info('finalize done')
         filePath = zipPath
       }
+      info(`readFileSync before:${filePath}`)
       const data = readFileSync(filePath)
       info('readFileSync done')
       const uploadResult = await octokit.request(

@@ -66502,6 +66502,7 @@ async function run() {
                 coreExports.info('finalize done');
                 filePath = zipPath;
             }
+            coreExports.info(`readFileSync before:${filePath}`);
             const data = readFileSync(filePath);
             coreExports.info('readFileSync done');
             const uploadResult = await octokit.request('POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}', {
