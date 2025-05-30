@@ -27,7 +27,7 @@ import require$$6 from 'string_decoder';
 import require$$0$d from 'diagnostics_channel';
 import require$$2$3 from 'child_process';
 import require$$6$1 from 'timers';
-import require$$1$6, { resolve, basename as basename$1 } from 'node:path';
+import require$$1$6, { resolve } from 'node:path';
 import require$$4$1, { statSync, createWriteStream, readFileSync } from 'node:fs';
 import { env } from 'process';
 import require$$0$e from 'constants';
@@ -66486,9 +66486,7 @@ async function run() {
             coreExports.info(`fileStat: ${json2}`);
             if (fileStat.isDirectory()) {
                 // 如果是文件夹那么先打成压缩包
-                const folderName = basename$1(filePath).replace('.', '-');
-                coreExports.info(`folderName: ${folderName}`);
-                filePath = `${folderName}.zip`;
+                filePath = `${filePath}.zip`;
                 coreExports.info(`filePath zip: ${filePath}`);
                 const output = createWriteStream(filePath);
                 coreExports.info('createWriteStream done');
