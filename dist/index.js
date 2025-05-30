@@ -66503,8 +66503,15 @@ async function run() {
                 filePath = zipPath;
             }
             coreExports.info(`readFileSync before:${filePath}`);
+            const fileStat1 = statSync(filePath);
+            const json3 = JSON.stringify(fileStat1, null, 2);
+            coreExports.info(`zip fileStat:${json3}`);
             const data = readFileSync(filePath);
             coreExports.info('readFileSync done');
+            const length = data.length;
+            coreExports.info(`length:${length}`);
+            const byteLength = data.byteLength;
+            coreExports.info(`byteLength:${byteLength}`);
             const uploadResult = await octokit.request('POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}', {
                 owner,
                 repo,
@@ -66515,8 +66522,8 @@ async function run() {
                 }
             });
             coreExports.info(`uploadResult.status: ${uploadResult.status}`);
-            const json3 = JSON.stringify(uploadResult.data, null, 2);
-            coreExports.info(`uploadResult.data: ${json3}`);
+            const json4 = JSON.stringify(uploadResult.data, null, 2);
+            coreExports.info(`uploadResult.data: ${json4}`);
         }
         // const scanResult = await scanAsync(root)
         // const result = JSON.stringify(scanResult)

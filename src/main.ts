@@ -78,8 +78,15 @@ export async function run(): Promise<void> {
         filePath = zipPath
       }
       info(`readFileSync before:${filePath}`)
+      const fileStat1 = statSync(filePath)
+      const json3 = JSON.stringify(fileStat1, null, 2)
+      info(`zip fileStat:${json3}`)
       const data = readFileSync(filePath)
       info('readFileSync done')
+      const length = data.length
+      info(`length:${length}`)
+      const byteLength = data.byteLength
+      info(`byteLength:${byteLength}`)
       const uploadResult = await octokit.request(
         'POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}',
         {
@@ -93,8 +100,8 @@ export async function run(): Promise<void> {
         }
       )
       info(`uploadResult.status: ${uploadResult.status}`)
-      const json3 = JSON.stringify(uploadResult.data, null, 2)
-      info(`uploadResult.data: ${json3}`)
+      const json4 = JSON.stringify(uploadResult.data, null, 2)
+      info(`uploadResult.data: ${json4}`)
     }
     // const scanResult = await scanAsync(root)
     // const result = JSON.stringify(scanResult)
