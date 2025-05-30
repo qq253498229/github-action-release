@@ -22,6 +22,8 @@ export async function run(): Promise<void> {
     info(`draft:${draft}`)
     const env: Env = processEnv
     info(`env:${env}`)
+    const envJson = JSON.stringify(env, null, 2)
+    info(`envJson:${envJson}`)
     const auth = env['GITHUB_TOKEN'] || ''
     const repository = env['GITHUB_REPOSITORY'] || ''
     const owners = repository.split('/')
@@ -46,14 +48,12 @@ export async function run(): Promise<void> {
       }
     )
     info(`createReleaseResult.status: ${createReleaseResult.status}`)
-    info(`createReleaseResult.data1: ${createReleaseResult.data}`)
     const json1 = JSON.stringify(createReleaseResult.data, null, 2)
-    info(`createReleaseResult.data2: ${json1}`)
+    info(`createReleaseResult.data: ${json1}`)
     const release = createReleaseResult.data
     // 上传文件
     for (const file of fileList) {
-      const filePath = `${root}/${file}`
-      info(`filePath:${filePath}`)
+      const filePath = resolve(file)
       const data = readFileSync(filePath)
       const uploadResult = await octokit.request(
         'POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}',
@@ -68,9 +68,8 @@ export async function run(): Promise<void> {
         }
       )
       info(`uploadResult.status: ${uploadResult.status}`)
-      info(`uploadResult.data1: ${uploadResult.data}`)
       const json2 = JSON.stringify(uploadResult.data, null, 2)
-      info(`uploadResult.data2: ${json2}`)
+      info(`uploadResult.data: ${json2}`)
     }
     // const scanResult = await scanAsync(root)
     // const result = JSON.stringify(scanResult)
