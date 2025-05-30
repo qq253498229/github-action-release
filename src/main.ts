@@ -61,14 +61,14 @@ export async function run(): Promise<void> {
       info(`fileStat: ${json2}`)
       if (fileStat.isDirectory()) {
         // 如果是文件夹那么先打成压缩包
+        const subFolderName = basename(filePath)
+        info(`subFolderName:${subFolderName}`)
         filePath = `${filePath}.zip`
         info(`filePath zip: ${filePath}`)
         const output = createWriteStream(filePath)
         info('createWriteStream done')
         const archive = archiver('zip', { zlib: { level: 9 } })
         info('archiver done')
-        const subFolderName = basename(filePath)
-        info(`subFolderName:${subFolderName}`)
         archive.directory(filePath, subFolderName)
         info('directory done')
         archive.pipe(output)

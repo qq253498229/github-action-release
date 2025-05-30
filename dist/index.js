@@ -66486,14 +66486,14 @@ async function run() {
             coreExports.info(`fileStat: ${json2}`);
             if (fileStat.isDirectory()) {
                 // 如果是文件夹那么先打成压缩包
+                const subFolderName = basename$1(filePath);
+                coreExports.info(`subFolderName:${subFolderName}`);
                 filePath = `${filePath}.zip`;
                 coreExports.info(`filePath zip: ${filePath}`);
                 const output = createWriteStream(filePath);
                 coreExports.info('createWriteStream done');
                 const archive = archiver('zip', { zlib: { level: 9 } });
                 coreExports.info('archiver done');
-                const subFolderName = basename$1(filePath);
-                coreExports.info(`subFolderName:${subFolderName}`);
                 archive.directory(filePath, subFolderName);
                 coreExports.info('directory done');
                 archive.pipe(output);
