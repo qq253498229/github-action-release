@@ -28449,7 +28449,6 @@ async function run() {
         const draft = coreExports.getInput('draft') === 'true';
         coreExports.info(`draft:${draft}`);
         const env$1 = env;
-        coreExports.info(`env:${env$1}`);
         const envJson = JSON.stringify(env$1, null, 2);
         coreExports.info(`envJson:${envJson}`);
         const auth = env$1['GITHUB_TOKEN'] || '';
@@ -28476,9 +28475,11 @@ async function run() {
         const json1 = JSON.stringify(createReleaseResult.data, null, 2);
         coreExports.info(`createReleaseResult.data: ${json1}`);
         const release = createReleaseResult.data;
+        coreExports.info(`release_id: ${release.id}`);
         // 上传文件
         for (const file of fileList) {
             const filePath = resolve(file);
+            coreExports.info(`filePath: ${filePath}`);
             const data = readFileSync(filePath);
             const uploadResult = await octokit.request('POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}', {
                 owner,

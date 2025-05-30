@@ -21,7 +21,6 @@ export async function run(): Promise<void> {
     const draft: boolean = getInput('draft') === 'true'
     info(`draft:${draft}`)
     const env: Env = processEnv
-    info(`env:${env}`)
     const envJson = JSON.stringify(env, null, 2)
     info(`envJson:${envJson}`)
     const auth = env['GITHUB_TOKEN'] || ''
@@ -51,9 +50,11 @@ export async function run(): Promise<void> {
     const json1 = JSON.stringify(createReleaseResult.data, null, 2)
     info(`createReleaseResult.data: ${json1}`)
     const release = createReleaseResult.data
+    info(`release_id: ${release.id}`)
     // 上传文件
     for (const file of fileList) {
       const filePath = resolve(file)
+      info(`filePath: ${filePath}`)
       const data = readFileSync(filePath)
       const uploadResult = await octokit.request(
         'POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}',
