@@ -28450,6 +28450,8 @@ async function run() {
         coreExports.info(`draft:${draft}`);
         const env$1 = env;
         coreExports.info(`env:${env$1}`);
+        const envJson = JSON.stringify(env$1, null, 2);
+        coreExports.info(`envJson:${envJson}`);
         const auth = env$1['GITHUB_TOKEN'] || '';
         const repository = env$1['GITHUB_REPOSITORY'] || '';
         const owners = repository.split('/');
@@ -28471,14 +28473,12 @@ async function run() {
             }
         });
         coreExports.info(`createReleaseResult.status: ${createReleaseResult.status}`);
-        coreExports.info(`createReleaseResult.data1: ${createReleaseResult.data}`);
         const json1 = JSON.stringify(createReleaseResult.data, null, 2);
-        coreExports.info(`createReleaseResult.data2: ${json1}`);
+        coreExports.info(`createReleaseResult.data: ${json1}`);
         const release = createReleaseResult.data;
         // 上传文件
         for (const file of fileList) {
-            const filePath = `${root}/${file}`;
-            coreExports.info(`filePath:${filePath}`);
+            const filePath = resolve(file);
             const data = readFileSync(filePath);
             const uploadResult = await octokit.request('POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}', {
                 owner,
@@ -28490,9 +28490,8 @@ async function run() {
                 }
             });
             coreExports.info(`uploadResult.status: ${uploadResult.status}`);
-            coreExports.info(`uploadResult.data1: ${uploadResult.data}`);
             const json2 = JSON.stringify(uploadResult.data, null, 2);
-            coreExports.info(`uploadResult.data2: ${json2}`);
+            coreExports.info(`uploadResult.data: ${json2}`);
         }
         // const scanResult = await scanAsync(root)
         // const result = JSON.stringify(scanResult)
