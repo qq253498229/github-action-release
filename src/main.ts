@@ -62,7 +62,7 @@ export async function run(): Promise<void> {
       if (fileStat.isDirectory()) {
         // 如果是文件夹那么先打成压缩包
         const folderName = basename(filePath)
-        info(`folderName: ${folderName}`)
+        info(`folderName: ${folderName.replaceAll('.', '-')}`)
         filePath = `${folderName}.zip`
         info(`filePath zip: ${filePath}`)
         const output = createWriteStream(filePath)
