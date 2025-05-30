@@ -54,7 +54,7 @@ export async function run(): Promise<void> {
     info(`release_id: ${release.id}`)
     // 上传文件
     for (const file of fileList) {
-      const filePath = resolve(file)
+      let filePath = resolve(file)
       info(`filePath: ${filePath}`)
       const fileStat = statSync(filePath)
       const json2 = JSON.stringify(fileStat, null, 2)
@@ -64,7 +64,7 @@ export async function run(): Promise<void> {
         const subFolderName = basename(filePath)
         info(`subFolderName:${subFolderName}`)
         const zipPath = `${filePath}.zip`
-        info(`filePath zip: ${filePath}`)
+        info(`zipPath: ${zipPath}`)
         const output = createWriteStream(zipPath)
         info('createWriteStream done')
         const archive = archiver('zip', { zlib: { level: 9 } })
@@ -75,6 +75,7 @@ export async function run(): Promise<void> {
         info('pipe done')
         await archive.finalize()
         info('finalize done')
+        filePath = zipPath
       }
       const data = readFileSync(filePath)
       info('readFileSync done')

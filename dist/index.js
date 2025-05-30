@@ -66479,7 +66479,7 @@ async function run() {
         coreExports.info(`release_id: ${release.id}`);
         // 上传文件
         for (const file of fileList) {
-            const filePath = resolve(file);
+            let filePath = resolve(file);
             coreExports.info(`filePath: ${filePath}`);
             const fileStat = statSync(filePath);
             const json2 = JSON.stringify(fileStat, null, 2);
@@ -66489,7 +66489,7 @@ async function run() {
                 const subFolderName = basename$1(filePath);
                 coreExports.info(`subFolderName:${subFolderName}`);
                 const zipPath = `${filePath}.zip`;
-                coreExports.info(`filePath zip: ${filePath}`);
+                coreExports.info(`zipPath: ${zipPath}`);
                 const output = createWriteStream(zipPath);
                 coreExports.info('createWriteStream done');
                 const archive = archiver('zip', { zlib: { level: 9 } });
@@ -66500,6 +66500,7 @@ async function run() {
                 coreExports.info('pipe done');
                 await archive.finalize();
                 coreExports.info('finalize done');
+                filePath = zipPath;
             }
             const data = readFileSync(filePath);
             coreExports.info('readFileSync done');
