@@ -1,4 +1,4 @@
-import { getInput, info, setFailed } from '@actions/core'
+import { error as printError, getInput, info, setFailed } from '@actions/core'
 import { basename, resolve } from 'node:path'
 import { createWriteStream, readFileSync, statSync } from 'node:fs'
 import { Octokit } from '@octokit/core'
@@ -115,6 +115,11 @@ export async function run(): Promise<void> {
     // info(`result:${result}`)
   } catch (error) {
     // Fail the workflow run if an error occurs
-    if (error instanceof Error) setFailed(error.message)
+    if (error instanceof Error) {
+      printError(`name:${error.name}`)
+      printError(`stack:${error.stack || ''}`)
+      printError(`message:${error.message}`)
+      setFailed(error.message)
+    }
   }
 }
