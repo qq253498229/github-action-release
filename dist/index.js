@@ -66487,7 +66487,7 @@ async function run() {
             if (fileStat.isDirectory()) {
                 // 如果是文件夹那么先打成压缩包
                 const folderName = basename$1(filePath);
-                coreExports.info(`folderName: ${folderName}`);
+                coreExports.info(`folderName: ${folderName.replaceAll('.', '-')}`);
                 filePath = `${folderName}.zip`;
                 coreExports.info(`filePath zip: ${filePath}`);
                 const output = createWriteStream(filePath);
