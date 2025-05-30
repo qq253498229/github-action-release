@@ -1,5 +1,5 @@
 import { getInput, info, setFailed } from '@actions/core'
-import { resolve } from 'node:path'
+import { basename, resolve } from 'node:path'
 import { createWriteStream, readFileSync, statSync } from 'node:fs'
 import { Octokit } from '@octokit/core'
 import { env as processEnv } from 'process'
@@ -67,7 +67,9 @@ export async function run(): Promise<void> {
         info('createWriteStream done')
         const archive = archiver('zip', { zlib: { level: 9 } })
         info('archiver done')
-        archive.directory(filePath, false)
+        const subFolderName = basename(filePath)
+        info(`subFolderName:${subFolderName}`)
+        archive.directory(filePath, subFolderName)
         info('directory done')
         archive.pipe(output)
         info('pipe done')
