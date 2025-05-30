@@ -66487,15 +66487,22 @@ async function run() {
             if (fileStat.isDirectory()) {
                 // 如果是文件夹那么先打成压缩包
                 const folderName = basename$1(filePath);
+                coreExports.info(`folderName: ${folderName}`);
                 filePath = `${folderName}.zip`;
                 coreExports.info(`filePath zip: ${filePath}`);
                 const output = createWriteStream(filePath);
+                coreExports.info('createWriteStream done');
                 const archive = archiver('zip', { zlib: { level: 9 } });
+                coreExports.info('archiver done');
                 archive.directory(filePath, false);
+                coreExports.info('directory done');
                 archive.pipe(output);
+                coreExports.info('pipe done');
                 await archive.finalize();
+                coreExports.info('finalize done');
             }
             const data = readFileSync(filePath);
+            coreExports.info('readFileSync done');
             const uploadResult = await octokit.request('POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}', {
                 owner,
                 repo,

@@ -62,15 +62,22 @@ export async function run(): Promise<void> {
       if (fileStat.isDirectory()) {
         // 如果是文件夹那么先打成压缩包
         const folderName = basename(filePath)
+        info(`folderName: ${folderName}`)
         filePath = `${folderName}.zip`
         info(`filePath zip: ${filePath}`)
         const output = createWriteStream(filePath)
+        info('createWriteStream done')
         const archive = archiver('zip', { zlib: { level: 9 } })
+        info('archiver done')
         archive.directory(filePath, false)
+        info('directory done')
         archive.pipe(output)
+        info('pipe done')
         await archive.finalize()
+        info('finalize done')
       }
       const data = readFileSync(filePath)
+      info('readFileSync done')
       const uploadResult = await octokit.request(
         'POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}',
         {
