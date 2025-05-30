@@ -90,15 +90,13 @@ export async function run(): Promise<void> {
       const name = basename(filePath)
       info(`name:${name}`)
       const uploadResult = await octokit.request(
-        'POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}',
+        'POST /repos/{owner}/{repo}/releases/{release_id}/assets',
         {
           owner,
           repo,
           release_id: release.id,
           data,
           name,
-          label: name,
-          baseUrl: 'https://uploads.github.com',
           headers: {
             'X-GitHub-Api-Version': '2022-11-28'
           }
